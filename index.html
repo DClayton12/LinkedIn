@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Darnel.LinkedIn</title>
+
+<!-- LinkedIn JavaScript API credentials
+and define a onLoad callback function -->
+<script type="text/javascript" src="https://platform.linkedin.com/in.js">/*
+  api_key: 77cg2ndtzhbhpb 
+  onLoad: onLinkedInLoad
+  authorize: true
+*/</script>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js "></script>
+
+<script src="justdoit.js"></script>
+
+<style>
+ #myPic, #profiles, #response,#google{
+    padding-top: 75px;
+    padding-right: 50px;
+    padding-bottom: 25px;
+    padding-left: 150px; 
+}
+</style>
+
+</head>
+
+<body>
+	<br>
+	<br>
+	<h2 align='center'>Darnel LinkedIn</h2>
+
+
+	<!-- Displays a button to let the viewer authenticate.
+	LinkedIn login will display in a new window.
+	If a user is logged in the window will now display. -->
+	
+	<div align="center" id="log">
+	<script type="IN/Login">
+		<?js if (pictureUrl) { ?>
+		<img id="myPic" src="<?js= pictureUrl ?>"></img>
+		<?js } else { ?>
+		<p>Upload a photo, so we can see what you look like.</p>
+		<?js } ?>
+	</script>
+	</div>
+
+        <div id="google">
+		<p>     USAGE: Login in to LinkedIn. <br>Search naturally as if using Google. <br></p>
+		<ul>Items to note:
+			<li>Application status will be appended to page in <b>bold</b>.</li>
+			<li>LinkedIn profiles in JSON format will be appened to page.</li>
+			<li>Number of bytes written and file name displayed last.</li>
+		</ul>
+
+                <form action="javascript:gatherInput()">
+                <input type="text" id="userQuery" name="userQuery" value="Search LinkedIn...">
+                <br>
+		<!-- <input type="text" id="lname" name="lname" value="Last name..."> -->
+                <input type="submit" value="Submit" >
+                </form>
+        </div> 
+
+        <!-- Search results will be displayed here.  
+        <div id="google">
+		<form action="javascript:sendit()">
+		<input type="text" id="curr_profile" name="curr_profile" value="Absolute LinkedIn URL here...">
+		<br>
+		<input type="submit" value="Submit" > 
+		</form>
+	</div> --> 
+
+
+	<!-- Status messages and profile data will be displayed here. -->
+	<div id="profiles"></div>
+
+	<!-- PHP response will be displayed here. -->
+	<div id='response'></div>
+
+
+</body>
+</html>
+
+
