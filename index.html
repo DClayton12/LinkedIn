@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Darnel.LinkedIn</title>
+<title>CDM LinkedIn search</title>
 
 <!-- LinkedIn JavaScript API credentials
 and define a onLoad callback function -->
@@ -29,7 +29,7 @@ and define a onLoad callback function -->
 <body>
 	<br>
 	<br>
-	<h2 align='center'>Darnel LinkedIn</h2>
+	<h2 align='center'>Darnel LinkedIn Search</h2>
 
 
 	<!-- Displays a button to let the viewer authenticate.
@@ -55,9 +55,13 @@ and define a onLoad callback function -->
 		</ul>
 
                 <form action="javascript:gatherInput()">
+				<br>
+				<input type="text" id="fname" name="fname" value="First Name...">
+				<br>
+				<input type="text" id="lname" name="lname" value="Last Name...">
+				<br>
                 <input type="text" id="userQuery" name="userQuery" value="Search LinkedIn...">
                 <br>
-		<!-- <input type="text" id="lname" name="lname" value="Last name..."> -->
                 <input type="submit" value="Submit" >
                 </form>
         </div> 

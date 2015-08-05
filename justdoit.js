@@ -20,16 +20,37 @@ function onLinkedInLoad(){
 
 function ready(){
 
-    console.log("Ready to gather linkedin profile information");
+    console.log("Ready to gather LinkedIn profile information");
 }
 
 function gatherInput(){
 
-    var userQuery = document.getElementById('userQuery').value;  //Collect user input from search bar.
+	var fname = document.getElementById('fname').value;
+	
+	fname = fname.replace(/\s+/g, '+');
+	
+	console.log("First name input: " + fname);
+	
+	var lname = document.getElementById('lname').value;
+	
+	lname = lname.replace(/\s+/g, '+');
+	
+	console.log("Last name input: " + lname);
 
-    if(userQuery == "" || userQuery == "Search LinkedIn..." ){	// If form is unchanged or blank submit query on user who is logged in.
+    var userQuery = document.getElementById('userQuery').value;  //Collect user input from search bar.
+	
+	userQuery = userQuery.replace(/\s+/g, '+');
+	
+	console.log("Extra parameters input: " + userQuery);
+
+	var totalInput = fname + "+" + lname + '+' + userQuery;
+    
+	if(fname == "First+Name..." && lname == "Last+Name..." && userQuery == "Search+LinkedIn..." || 
+		fname== "" && lname == "" && userQuery == ""){	// If and only if form is unchanged or blank submit query on user who is logged in.
 
         alert("No input received. Searching profile of logged in user.");
+		
+		totalInput = "";
 
         onLinkedInAuth("me");
 
@@ -37,18 +58,18 @@ function gatherInput(){
 
     }
 
-    fixUserInput(userQuery);
+    fixUserInput(totalInput);
 
 }
 
-function fixUserInput(userQuery){
+function fixUserInput(totalInput){
+	
+	console.log("Concatenated input: " + totalInput);
+	
+	var fixedInput = totalInput.replace(/\s+/g, '+'); 	//http://web-design-lessons.com/articles/article/1/Javascript%20Replace%20All%20Instances%20In%20a%20String
 
-    var fixedInput = userQuery.replace(/\s+/g, '+'); 	//http://web-design-lessons.com/articles/article/1/Javascript%20Replace%20All%20Instances%20In%20a%20String
-
-    console.log("User input is: " + userQuery);
-
-    console.log("Replaced whitespace with '+' " + fixedInput);
-
+	console.log("Replaced whitespace with '+' " + fixedInput);
+	
     var customSearchStr = "https://www.googleapis.com/customsearch/v1?key=AIzaSyCf2GppoXDjGorxucF2wtlomiB2j9Yy_SQ&cx=006724625907300947303:fzfujafkfwq&q=";
     //Call to Google's REST API. Includes my API key and Custom Search Engine ID.
 
@@ -85,7 +106,7 @@ function contactGoogle(custom_search){
 
     myGoogleRequest.get(custom_search , function(response){
    
-   // console.log(response);	//Uncomment to analyze raw JSON response from Google Custom search API.
+    console.log(response);	//Uncomment to analyze raw JSON response from Google Custom search API.
 
     var google_result = JSON.parse(response);
  
@@ -93,7 +114,7 @@ function contactGoogle(custom_search){
 
     for (var count in profileArray){
 
-	var resulting_profile = "url=";
+		var resulting_profile = "url=";
 
         console.log(resulting_profile += profileArray[count].link);
  
@@ -109,7 +130,7 @@ function onLinkedInAuth(user_defined_profile) { // It is possible to request pro
     console.log("Compiled format of user profile: " + user_defined_profile);
 
     IN.API.Profile(user_defined_profile)
-    .fields("email-address","picture-urls::(original)","num-connections","id","current-share","firstName", "lastName", "industry","headline", "skills", "educations","summary","positions","specialties","location")
+    .fields("email-address","picture-url","picture-urls::(original)","num-connections","id","current-share","firstName", "lastName", "industry","headline", "skills", "educations","summary","positions","specialties","location")
     .result(displayProfiles); 
 }
 
@@ -122,84 +143,43 @@ function displayProfiles(profiles) {
     profilesDiv.innerHTML += "<p><b> LinkedIn Profiles received. </b></p>";	// Status message.
 
     console.log("Array length should be 1. CHECK --> " + members.length);    // Array must contain 1 element. 
-						       //For loop in google_custom_search_engine() controls flow to linkedIn API.
+																			//For loop in google_custom_search_engine() controls flow to linkedIn API.
 
-    var curr_profile = JSON.stringify(members[0]); 	// Convert JS profile object to JSON. Use to deference profile fields.
+	var fname = document.getElementById('fname').value;
+	
+	//console.log("First name input: " + fname);
+	
+	var lname = document.getElementById('lname').value;
+	
+	//console.log("Last name input: " + lname);
 
-    profilesDiv.innerHTML += "<p><b>Requested LinkedIn Profile in JSON format:</b></p>" + curr_profile; // Writing JSON to document for inspeciton
+	var curr_profile = JSON.stringify(members[0]); 	// Convert JS profile object to JSON. Use to deference profile fields.
+	
+	if(fname.toUpperCase() == members[0].firstName.toUpperCase() && lname.toUpperCase() == members[0].lastName.toUpperCase() || 
+			fname == "First Name..." && lname == "Last Name..." || 
+			fname== "" && lname == "") { 
+	//Only capture and display profiles that the user explicity searched for by first and last name.
+        if(members[0].pictureUrls._total != 0){ //If and only if a LinkedIn member has a photo display it and log it to the console.
+			
+			console.log(members[0].firstName + " " + members[0].lastName + "\'s photoURL --> " + members[0].pictureUrls.values[0]);
+			
+			profilesDiv.innerHTML += "<p><br>  <img src='"  + members[0].pictureUrls.values[0] + "'/>"; 
+			
+		}
 
-    $.post('write_profile.php', curr_profile, function(data){
+		profilesDiv.innerHTML += "<p><b>Requested LinkedIn Profile in JSON format:</b></p>" + curr_profile; // Writing JSON to document for inspeciton
+	
+    $.post('write_profile.php', curr_profile, function(data){  //UNcomment to enable 
 
   	$('#response').html(data);
 
 	}).fail(function() {
 
-	alert( "Posting to PHP File failed." );
+		alert( "Posting to PHP File failed." );
 
 	});
   
-    profilesDiv.innerHTML += "<p><b>POST rquest sent to PHP page.</b></p>";
-           
-/*    profilesDiv.innerHTML += "<p><b>Displaying LinkedIn profile data for readability.</b></p>";
-    for (var member in members){
-
-    if(members[member].pictureUrls._total != 0){
-        $profilesDiv.innerHTML += "<p> " +
-	"<br><br>  <img src='"  + members[member].pictureUrls.values[0] + "'>"; }
-    
-        profilesDiv.innerHTML += "<p> " +	
-	"<br><br>  Member's LinkedIn ID:	  " + members[member].id  + //No conditional, linkedin requires name and email, ID is generated.
-	"<br><br>  Member's first_name:  		 " + members[member].firstName + 
-	"<br><br>  Member's last_name:   		 " + members[member].lastName +
-	"<br><br>  Member's email address:             " + members[member].emailAddress +
-	"<br><br>  Member's headline:   	" + members[member].headline +
-        "<br><br>  Member's work industry:  	 " + members[member].industry +
-	"<br><br>  Member's profile summary:		" + members[member].summary  +
-	"<br><br>  Member's location:  		" + members[member].location.name  +
-	"<br><br>  Member's Country:           " + members[member].location.country.code + 
-	"<br><br>  Member's most-recent status:  	" + members[member].currentShare.comment  +
-	"<br><br>  Member's number of linkedin connections:           " + members[member].numConnections;
-
-    if(members[member].positions._total != 0){
-        profilesDiv.innerHTML += "<p> " +	
-	"<br><br>  Member's most recent position:           " + members[member].positions.values[0].title +
-	"<br><br>  Member's most recent employer:           " + members[member].positions.values[0].company.name +
-	"<br><br>  Member currently working here?:           " + members[member].positions.values[0].isCurrent +
-	"<br><br>  Employer industry:		           " + members[member].positions.values[0].company.industry +
-	"<br><br>  Company size:                      " + members[member].positions.values[0].company.size +
-	"<br><br>  Company type:                      " + members[member].positions.values[0].company.type +
-	"<br><br>  Start date of member at " + members[member].positions.values[0].company.name +
-	":			"  + members[member].positions.values[0].startDate.month + 
-	"/" + members[member].positions.values[0].startDate.year +
-	"<br><br>  Member's work summary:           " + members[member].positions.values[0].summary + 
-	"<br><br>  [NO ACCESS TO FULL PROFILE] Member's skills:		 " + members[member].skills;
-	}*/
-
-/*Fields below are not returned from LinkedIn API. Permission needed to access "r_full_profile".
-Please see this document for further info and application for permission:
-https://developer.linkedin.com/support/developer-program-transition
-https://developer.linkedin.com/docs/apply-with-linkedin
- 
-	"<br> [NO ACCESS TO FULL PROFILE] Member's education " +  members[member]["educations"]["values"][0]["schoolName"];  
-	"<br> [NO ACCESS TO FULL PROFILE] MEMBER SKILLSS HERE " +  members[member].skills.values[0].skill.name;
+    profilesDiv.innerHTML += "<p><b>POST rquest sent to PHP page.</b></p>"; 
+	
 	}
-*/
-
-/*
-  Alternate method to post JSON to php page.
-  var curr_profile = JSON.stringify(members[0]);
-
-    $.ajax({
-            type: "POST",
-            dataType: "json",
-            url: "write_profile.php",
-            data: {myData:curr_profile},
-            contentType: "application/json; charset=utf-8",
-            success: function(data){
-                alert('Profile data sent to be written.');
-            },
-            error: function(e){
-                console.log(e.message);
-            }
-    });*/
 }

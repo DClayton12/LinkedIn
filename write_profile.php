@@ -19,13 +19,22 @@
     $jsonData = json_encode($input);
 
     //I am counting the # of files in the current dir. This number will be appended to the filename to ensure file are not overwritten.
-    $file_count = new FilesystemIterator(__DIR__, FilesystemIterator::SKIP_DOTS);
+    /*$file_count = new FilesystemIterator(__DIR__, FilesystemIterator::SKIP_DOTS);
     
-    //printf("NUMBER OF FILES IN THE CURRENT DIR IS:  %d Files", iterator_count($file_count)); //Uncomment to display number of files to the user.
+    printf("NUMBER OF FILES IN THE CURRENT DIR IS:  %d Files", iterator_count($file_count)); //Uncomment to display number of files to the user.
 
     $LinkedinOutput = 'curr_profile' . (iterator_count($file_count)+1) . '.txt'; // Concat file with unique identifier and file extension.
+	*/
+	
+	
+	// Alternate functionality of unique name convention and counting files. School server is running PHP lower than 5.3. FilesystemIterator not available.
+	$file_count = glob("*.txt");  // http://stackoverflow.com/questions/28804896/fatal-error-class-filesystemiterator-not-found
+	
+	$file_count = count($file_count);
 
-    //echo "<br> FILE NAME IS: $LinkedinOutput "; //File name is concatted with number of files in the directory.
+	$LinkedinOutput = 'curr_profile' . $file_count . '.txt';
+
+    echo "<br> FILE NAME IS: $LinkedinOutput "; //File name is concatted with number of files in the directory.
     
 
     //Write string to output
