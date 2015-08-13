@@ -168,8 +168,10 @@ function displayProfiles(profiles) {
 		}
 
 		profilesDiv.innerHTML += "<p><b>Requested LinkedIn Profile in JSON format:</b></p>" + curr_profile; // Writing JSON to document for inspeciton
+		
+	}
 	
-    $.post('write_profile.php', curr_profile, function(data){  //UNcomment to enable 
+    /* $.post('write_profile.php', curr_profile, function(data){  //UNcomment to enable 
 
   	$('#response').html(data);
 
@@ -179,7 +181,5 @@ function displayProfiles(profiles) {
 
 	});
   
-    profilesDiv.innerHTML += "<p><b>POST rquest sent to PHP page.</b></p>"; 
-	
-	}
+    profilesDiv.innerHTML += "<p><b>POST rquest sent to PHP page.</b></p>"; */
 }
